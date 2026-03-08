@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# Block committing auth state files
+if git diff --cached --name-only | grep -q "^\.auth/"; then
+  echo "ERROR: Attempting to commit auth state files. Remove them from staging."
+  exit 1
+fi
+
+# Block committing .env files (matches .env, .env.local, .env.staging, etc.)
+if git diff --cached --name-only | grep -q "^\.env"; then
+  # Allow .env.example
+  if git diff --cached --name-only | grep "^\.env" | grep -qv "^\.env\.example$"; then
+    echo "ERROR: Attempting to commit .env file(s). These files contain secrets."
+    exit 1
+  fi
+fi
+
+npx lint-staged
