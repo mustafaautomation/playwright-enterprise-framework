@@ -1,0 +1,75 @@
+{
+  "name": "playwright-enterprise-framework",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Enterprise-grade Playwright E2E automation framework — SauceDemo reference implementation",
+  "keywords": [
+    "playwright",
+    "automation",
+    "testing",
+    "e2e",
+    "qa",
+    "page-object-model",
+    "accessibility",
+    "visual-regression",
+    "cross-browser"
+  ],
+  "author": "Quvantic <info@quvantic.com> (https://quvantic.com)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mustafaautomation/playwright-enterprise-framework.git"
+  },
+  "homepage": "https://github.com/mustafaautomation/playwright-enterprise-framework#readme",
+  "bugs": {
+    "url": "https://github.com/mustafaautomation/playwright-enterprise-framework/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "playwright test",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:regression": "playwright test --grep @regression",
+    "test:chromium": "playwright test --project=chromium",
+    "test:firefox": "playwright test --project=firefox",
+    "test:webkit": "playwright test --project=webkit",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:ui": "playwright test --ui",
+    "test:visual": "playwright test --project=visual",
+    "test:visual:update": "playwright test --project=visual --update-snapshots",
+    "test:a11y": "playwright test --project=a11y",
+    "test:perf": "playwright test --project=performance",
+    "test:data": "playwright test tests/e2e/data-driven",
+    "test:network": "playwright test tests/e2e/network",
+    "docker:test": "docker-compose run tests",
+    "docker:smoke": "docker-compose run smoke",
+    "report": "playwright show-report reports/html",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "format": "prettier --write \"**/*.ts\"",
+    "format:check": "prettier --check \"**/*.ts\"",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write",
+      "eslint --fix"
+    ]
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.11.1",
+    "@playwright/test": "^1.44.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "allure-playwright": "^3.6.0",
+    "dotenv": "^16.4.5",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.0",
+    "prettier": "^3.3.0",
+    "typescript": "^5.4.0"
+  }
+}
