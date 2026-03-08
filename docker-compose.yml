@@ -1,0 +1,22 @@
+services:
+  tests:
+    build: .
+    environment:
+      - BASE_URL=https://www.saucedemo.com
+      - PASSWORD=${PASSWORD:?Set PASSWORD env var before running}
+      - CI=true
+    command: npx playwright test
+    volumes:
+      - ./reports:/app/reports
+      - ./test-results:/app/test-results
+
+  smoke:
+    build: .
+    environment:
+      - BASE_URL=https://www.saucedemo.com
+      - PASSWORD=${PASSWORD:?Set PASSWORD env var before running}
+      - CI=true
+    command: npx playwright test --grep @smoke --project=chromium --project=auth-tests
+    volumes:
+      - ./reports:/app/reports
+      - ./test-results:/app/test-results

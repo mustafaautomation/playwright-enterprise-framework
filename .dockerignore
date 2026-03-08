@@ -1,0 +1,13 @@
+.env
+.env.*
+!.env.example
+.auth/
+node_modules/
+test-results/
+reports/
+playwright-report/
+allure-results/
+allure-report/
+.git/
+.husky/
+docs/
