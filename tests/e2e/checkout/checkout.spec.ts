@@ -47,7 +47,10 @@ test.describe('Checkout', () => {
       const tax = await checkoutPage.getTax();
       const total = await checkoutPage.getTotal();
 
-      const expectedSubtotal = PRODUCTS[0].price + PRODUCTS[2].price;
+      // Backpack ($29.99) + Bolt T-Shirt ($15.99) — matches beforeEach additions
+      const backpack = PRODUCTS.find((p) => p.name === 'Sauce Labs Backpack')!;
+      const boltTShirt = PRODUCTS.find((p) => p.name === 'Sauce Labs Bolt T-Shirt')!;
+      const expectedSubtotal = backpack.price + boltTShirt.price;
       expect(subtotal).toBeCloseTo(expectedSubtotal, 1);
       expect(total).toBeCloseTo(subtotal + tax, 1);
     });

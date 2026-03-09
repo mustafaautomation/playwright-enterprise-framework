@@ -2,7 +2,7 @@ import { Page } from '@playwright/test';
 
 export interface WebVitals {
   fcp: number | null;
-  ttfb: number | null;
+  ttfb: number;
   domContentLoaded: number;
   loadComplete: number;
 }

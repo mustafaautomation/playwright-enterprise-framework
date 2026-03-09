@@ -32,7 +32,7 @@ A production-ready Playwright automation framework demonstrating enterprise-leve
 
 This framework mirrors how production QA automation infrastructure is built at scale. Key outcomes:
 
-- **53 unique test cases** across 8 browser projects, producing 155 test runs per full execution
+- **54 unique test cases** across 8 browser projects, producing 159 test runs per full execution
 - **Zero repeated logins** -- auth state saved once via `global.setup.ts`, reused across all tests
 - **Cross-browser coverage** -- Chromium, Firefox, WebKit, and Mobile Chrome
 - **CI/CD pipeline** -- smoke on PRs, full regression on merge and nightly schedule
@@ -79,7 +79,7 @@ $ npx playwright test --project=a11y --project=performance
   6 passed (5.3s)
 ```
 
-> **53 unique test cases** producing **155 runs** across Chromium, Firefox, WebKit, and Mobile Chrome -- plus dedicated a11y, performance, and visual regression suites.
+> **54 unique test cases** producing **155 runs** across Chromium, Firefox, WebKit, and Mobile Chrome -- plus dedicated a11y, performance, and visual regression suites.
 
 ---
 
