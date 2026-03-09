@@ -11,25 +11,28 @@ test.describe('Network & API Validation', () => {
     const failedRequests: string[] = [];
     page.on('response', (response) => {
       const resourceType = response.request().resourceType();
-      // Only track XHR/fetch API requests, not document navigations or static assets
       if (response.status() >= 400 && ['xhr', 'fetch'].includes(resourceType)) {
         failedRequests.push(`${response.status()} ${response.url()}`);
       }
     });
 
-    await inventoryPage.goto();
-    await inventoryPage.addToCartByName('Sauce Labs Backpack');
-    await header.goToCart();
-    await cartPage.checkout();
-    await checkoutPage.fillCustomerInfo({
-      firstName: 'Test',
-      lastName: 'User',
-      postalCode: '10001',
+    await test.step('Navigate through checkout flow', async () => {
+      await inventoryPage.goto();
+      await inventoryPage.addToCartByName('Sauce Labs Backpack');
+      await header.goToCart();
+      await cartPage.checkout();
+      await checkoutPage.fillCustomerInfo({
+        firstName: 'Test',
+        lastName: 'User',
+        postalCode: '10001',
+      });
+      await checkoutPage.continue();
+      await checkoutPage.finish();
     });
-    await checkoutPage.continue();
-    await checkoutPage.finish();
 
-    expect(failedRequests, `Failed requests: ${failedRequests.join(', ')}`).toHaveLength(0);
+    await test.step('Verify no failed API requests', async () => {
+      expect(failedRequests, `Failed requests: ${failedRequests.join(', ')}`).toHaveLength(0);
+    });
   });
 
   test('should load all images without errors on inventory page @regression', async ({
@@ -55,19 +58,21 @@ test.describe('Network & API Validation', () => {
   });
 
   test('should block analytics and track page performance @regression', async ({ page }) => {
-    // Block third-party analytics
-    await page.route('**/*google-analytics*/**', (route) => route.abort());
-    await page.route('**/*facebook*/**', (route) => route.abort());
+    await test.step('Block analytics', async () => {
+      await page.route('**/*google-analytics*/**', (route) => route.abort());
+      await page.route('**/*facebook*/**', (route) => route.abort());
+    });
 
-    await page.goto('/inventory.html');
-    await page.waitForLoadState('networkidle');
+    await test.step('Load page and measure performance', async () => {
+      await page.goto('/inventory.html');
+      await page.waitForLoadState('networkidle');
 
-    // Collect navigation timing
-    const navEntries = await page.evaluate(() => performance.getEntriesByType('navigation'));
-    expect(navEntries.length).toBeGreaterThan(0);
+      const loadTime = await page.evaluate(() => {
+        const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+        return nav.loadEventEnd - nav.startTime;
+      });
 
-    const nav = navEntries[0];
-    // Page should load within 5 seconds
-    expect(nav.loadEventEnd - nav.startTime).toBeLessThan(5000);
+      expect(loadTime, `Page load took ${loadTime}ms`).toBeLessThan(5000);
+    });
   });
 });

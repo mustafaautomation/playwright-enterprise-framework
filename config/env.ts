@@ -9,13 +9,7 @@ export const ENV = {
   LOCKED_USER: process.env.LOCKED_USER || 'locked_out_user',
   PROBLEM_USER: process.env.PROBLEM_USER || 'problem_user',
   PERF_USER: process.env.PERF_USER || 'performance_glitch_user',
-  PASSWORD: (() => {
-    const p = process.env.PASSWORD?.trim();
-    if (!p && process.env.CI) {
-      // eslint-disable-next-line no-console
-      console.warn('WARNING: PASSWORD env var not set in CI — using default fallback');
-    }
-    return p || 'secret_sauce';
-  })(),
+  // secret_sauce is SauceDemo's public credential (displayed on login page)
+  PASSWORD: process.env.PASSWORD?.trim() || 'secret_sauce',
   TEST_ENV: process.env.TEST_ENV || 'production',
 } as const;

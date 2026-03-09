@@ -5,7 +5,7 @@ A production-ready Playwright automation framework demonstrating enterprise-leve
 [![Regression Tests](https://github.com/mustafaautomation/playwright-enterprise-framework/actions/workflows/regression.yml/badge.svg)](https://github.com/mustafaautomation/playwright-enterprise-framework/actions/workflows/regression.yml)
 [![Smoke Tests](https://github.com/mustafaautomation/playwright-enterprise-framework/actions/workflows/smoke.yml/badge.svg)](https://github.com/mustafaautomation/playwright-enterprise-framework/actions/workflows/smoke.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Playwright](https://img.shields.io/badge/Playwright-1.44+-45ba63.svg?logo=playwright)](https://playwright.dev)
+[![Playwright](https://img.shields.io/badge/Playwright-1.58+-45ba63.svg?logo=playwright)](https://playwright.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6.svg?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Node.js](https://img.shields.io/badge/Node.js-20+-339933.svg?logo=node.js&logoColor=white)](https://nodejs.org)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg?logo=docker&logoColor=white)](Dockerfile)
@@ -32,11 +32,11 @@ A production-ready Playwright automation framework demonstrating enterprise-leve
 
 This framework mirrors how production QA automation infrastructure is built at scale. Key outcomes:
 
-- **53 unique test cases** across 8 browser projects, producing 159 test runs per full execution
+- **53 unique test cases** across 8 browser projects, producing 155 test runs per full execution
 - **Zero repeated logins** -- auth state saved once via `global.setup.ts`, reused across all tests
 - **Cross-browser coverage** -- Chromium, Firefox, WebKit, and Mobile Chrome
 - **CI/CD pipeline** -- smoke on PRs, full regression on merge and nightly schedule
-- **Enterprise patterns** -- POM architecture, custom fixtures, data-driven tests, network validation
+- **Enterprise patterns** -- POM architecture, custom fixtures, `test.step()` tracing, data-driven tests, network validation
 - **Code quality gates** -- ESLint + Prettier enforced via Husky pre-commit hooks and CI checks
 
 ---
@@ -79,7 +79,7 @@ $ npx playwright test --project=a11y --project=performance
   6 passed (5.3s)
 ```
 
-> **53 unique test cases** producing **159 runs** across Chromium, Firefox, WebKit, and Mobile Chrome -- plus dedicated a11y, performance, and visual regression suites.
+> **53 unique test cases** producing **155 runs** across Chromium, Firefox, WebKit, and Mobile Chrome -- plus dedicated a11y, performance, and visual regression suites.
 
 ---
 
@@ -168,7 +168,7 @@ Tests intercept HTTP responses to detect failed API calls, broken images (exclud
 
 | Layer | Technology |
 |---|---|
-| Framework | [Playwright](https://playwright.dev) 1.44+ |
+| Framework | [Playwright](https://playwright.dev) 1.58+ |
 | Language | TypeScript 5 (strict mode) |
 | Pattern | Page Object Model (POM) |
 | Accessibility | [axe-core](https://github.com/dequelabs/axe-core) (WCAG 2.0 AA) |
@@ -176,6 +176,7 @@ Tests intercept HTTP responses to detect failed API calls, broken images (exclud
 | Code Quality | ESLint + Prettier |
 | Git Hooks | Husky + lint-staged (pre-commit quality gate) |
 | CI/CD | GitHub Actions (smoke + regression) |
+| Test Data | [Faker.js](https://fakerjs.dev) for realistic random data |
 | Containerization | Docker + docker-compose |
 
 ---
@@ -206,7 +207,7 @@ playwright-enterprise-framework/
 │   ├── fixtures/
 │   │   └── index.ts                 # Custom Playwright fixtures
 │   ├── utils/
-│   │   ├── helpers.ts               # Random data generators
+│   │   ├── helpers.ts               # Faker-powered test data generators
 │   │   └── performance.ts           # Web Vitals collection
 │   └── data/
 │       ├── users.ts                 # Multi-user test data
@@ -313,7 +314,7 @@ npm run test:ui
 | `BASE_URL` | `https://www.saucedemo.com` | Target application |
 | `TEST_ENV` | `production` | Environment (`production` / `staging`) |
 | `STANDARD_USER` | `standard_user` | Primary test user |
-| `PASSWORD` | *(required)* | Test user password |
+| `PASSWORD` | `secret_sauce` | Test user password (public SauceDemo credential) |
 | `LOCKED_USER` | `locked_out_user` | Locked account (negative testing) |
 | `PROBLEM_USER` | `problem_user` | Buggy UI user (glitch testing) |
 | `PERF_USER` | `performance_glitch_user` | Slow response user |
@@ -341,7 +342,7 @@ PASSWORD=secret_sauce npm run docker:test
 PASSWORD=secret_sauce npm run docker:smoke
 ```
 
-> Note: `PASSWORD` env var is required. Docker will not run with a fallback default.
+> Note: SauceDemo uses the public credential `secret_sauce` (displayed on the login page). The framework defaults to it automatically.
 
 ---
 

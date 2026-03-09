@@ -15,7 +15,7 @@ export async function collectWebVitals(page: Page): Promise<WebVitals> {
 
     return {
       fcp: fcp ? fcp.startTime : null,
-      ttfb: nav.responseStart - nav.requestStart,
+      ttfb: nav.responseStart - nav.startTime,
       domContentLoaded: nav.domContentLoadedEventEnd - nav.startTime,
       loadComplete: nav.loadEventEnd - nav.startTime,
     };

@@ -1,5 +1,6 @@
 import { chromium } from '@playwright/test';
 import { ENV } from './config/env';
+import { LoginPage } from './src/pages';
 import * as fs from 'fs';
 
 async function globalSetup() {
@@ -8,11 +9,10 @@ async function globalSetup() {
 
   const browser = await chromium.launch();
   const page = await browser.newPage();
+  const loginPage = new LoginPage(page);
 
-  await page.goto(ENV.BASE_URL);
-  await page.fill('[data-test="username"]', ENV.STANDARD_USER);
-  await page.fill('[data-test="password"]', ENV.PASSWORD);
-  await page.click('[data-test="login-button"]');
+  await loginPage.goto();
+  await loginPage.login(ENV.STANDARD_USER, ENV.PASSWORD);
 
   try {
     await page.waitForURL('**/inventory.html', { timeout: 15_000 });

@@ -11,14 +11,15 @@ test.describe('Multi-User Scenarios', () => {
     await loginPage.login(USERS.problem.username, USERS.problem.password);
     await expect(page).toHaveURL(/inventory\.html/);
 
-    // Problem user can login but product images are broken (all show the same image)
     const productCount = await inventoryPage.getProductCount();
     expect(productCount).toBe(6);
 
-    // Verify the user can at least add items to cart
-    await inventoryPage.addToCartByName('Sauce Labs Backpack');
-    const names = await inventoryPage.getProductNames();
-    expect(names.length).toBe(6);
+    // Problem user's known glitch: all product images share the same broken src
+    const images = page.locator('.inventory_item img');
+    const srcs = await images.evaluateAll((imgs: HTMLImageElement[]) => imgs.map((img) => img.src));
+    const uniqueSrcs = new Set(srcs);
+    // All images point to the same URL — this is the documented SauceDemo bug
+    expect(uniqueSrcs.size, 'Expected all product images to share the same broken src').toBe(1);
   });
 
   test('performance user should load inventory within acceptable time @regression', async ({
@@ -31,8 +32,13 @@ test.describe('Multi-User Scenarios', () => {
     await expect(page).toHaveURL(/inventory\.html/, { timeout: 15_000 });
     const loadTime = Date.now() - startTime;
 
-    // Performance glitch user is intentionally slow, but should load within 15s
-    expect(loadTime, `Login took ${loadTime}ms`).toBeLessThan(15_000);
+    // Performance glitch user is intentionally slow — verify it loaded but log the actual time
+    // The URL assertion above already enforces the 15s timeout, this adds observability
+    test.info().annotations.push({
+      type: 'performance',
+      description: `Login+load took ${loadTime}ms`,
+    });
+    expect(loadTime, `Login took ${loadTime}ms — exceeds 15s budget`).toBeLessThan(15_000);
   });
 
   test('standard user should see 6 products after login @smoke @regression', async ({
