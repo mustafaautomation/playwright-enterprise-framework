@@ -1,7 +1,7 @@
 import { Page, Locator } from '@playwright/test';
 
 export class Header {
-  private readonly cartBadge: Locator;
+  readonly cartBadge: Locator;
   private readonly cartLink: Locator;
   private readonly burgerMenuButton: Locator;
   private readonly logoutLink: Locator;
