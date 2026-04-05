@@ -32,7 +32,7 @@ A production-ready Playwright automation framework demonstrating enterprise-leve
 
 This framework mirrors how production QA automation infrastructure is built at scale. Key outcomes:
 
-- **62 unique test cases** across 8 browser projects, producing 191 test runs per full execution
+- **72 unique test cases** across 8 browser projects, producing 231 test runs per full execution
 - **Zero repeated logins** -- auth state saved once via `global.setup.ts`, reused across all tests
 - **Cross-browser coverage** -- Chromium, Firefox, WebKit, and Mobile Chrome
 - **CI/CD pipeline** -- smoke on PRs, full regression on merge and nightly schedule
@@ -303,6 +303,8 @@ npm run test:ui
 | Network | Failed API detection, broken image detection, performance tracking | `@regression` |
 | API Mocking | Route interception, degraded responses, blocked assets, request counting | `@regression` |
 | Storage | Cart persistence across reloads, session state across login cycles, cookie security | `@regression` |
+| Responsive | Mobile, tablet, desktop viewports, cross-viewport cart persistence | `@regression` |
+| Error Handling | Locked user, empty/invalid credentials, error recovery, auth redirect | `@regression` |
 | Accessibility | axe-core WCAG 2.0 AA audits across 4 pages | `@a11y` `@regression` |
 | Performance | TTFB, FCP, DOM Content Loaded, Load Complete budgets | `@performance` `@regression` |
 | Visual | Pixel-diff snapshot comparisons for key pages | `@visual` |
