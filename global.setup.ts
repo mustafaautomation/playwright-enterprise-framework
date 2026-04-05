@@ -8,7 +8,8 @@ async function globalSetup() {
   fs.mkdirSync(authDir, { recursive: true });
 
   const browser = await chromium.launch();
-  const page = await browser.newPage();
+  const context = await browser.newContext({ baseURL: ENV.BASE_URL });
+  const page = await context.newPage();
   const loginPage = new LoginPage(page);
 
   await loginPage.goto();
