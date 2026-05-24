@@ -65,6 +65,12 @@ jobs:
           BASE_URL: ${{ vars.BASE_URL || 'https://www.saucedemo.com' }}
           PASSWORD: ${{ secrets.SAUCE_PASSWORD }}
 
+      - name: Run universal tests
+        run: npm run test:universal
+        env:
+          BASE_URL: ${{ vars.BASE_URL || 'https://www.saucedemo.com' }}
+          PASSWORD: ${{ secrets.SAUCE_PASSWORD }}
+
       - name: Upload HTML report
         if: always()
         uses: actions/upload-artifact@v4
