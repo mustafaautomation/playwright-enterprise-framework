@@ -3,16 +3,28 @@ import AxeBuilder from '@axe-core/playwright';
 import { universalChecksConfig } from '../../config/universal-checks.config';
 
 export class UniversalChecks {
-  private consoleErrors: string[] = [];
+  private consoleErrors: { text: string; url: string }[] = [];
+  private failedDocumentUrls = new Set<string>();
 
   constructor(private readonly page: Page) {}
 
   /** Start collecting console errors — call once before navigation. */
   startConsoleCollection(): void {
     this.consoleErrors = [];
+    this.failedDocumentUrls.clear();
     this.page.on('console', (msg) => {
       if (msg.type() === 'error') {
-        this.consoleErrors.push(msg.text());
+        this.consoleErrors.push({ text: msg.text(), url: msg.location().url });
+      }
+    });
+    this.page.on('response', (response) => {
+      const request = response.request();
+      if (
+        response.status() >= 400 &&
+        request.isNavigationRequest() &&
+        request.frame() === this.page.mainFrame()
+      ) {
+        this.failedDocumentUrls.add(response.url());
       }
     });
   }
@@ -34,15 +46,51 @@ export class UniversalChecks {
   }
 
   private async checkConsoleErrors(): Promise<void> {
-    const { ignorePatterns } = universalChecksConfig.checks.consoleErrors;
-    const unexpected = this.consoleErrors.filter((err) => !ignorePatterns.some((p) => p.test(err)));
+    const unexpected = this.consoleErrors
+      .filter((err) => !this.isIgnoredConsoleError(err))
+      .map((err) => (err.url ? `${err.text} [${err.url}]` : err.text));
     expect(unexpected, `Unexpected console errors: ${unexpected.join(', ')}`).toHaveLength(0);
   }
 
+  private isIgnoredConsoleError(err: { text: string; url: string }): boolean {
+    const cfg = universalChecksConfig.checks.consoleErrors;
+    if (cfg.ignorePatterns.some((p) => p.test(err.text))) return true;
+
+    // Only network "Failed to load resource" errors are eligible for the URL-based filters
+    // below; JavaScript errors raised by the app are always reported.
+    if (!err.text.startsWith('Failed to load resource') || !err.url) return false;
+
+    if (cfg.ignoreResourceUrlPatterns.some((p) => p.test(err.url))) return true;
+    if (cfg.ignoreSpaFallbackDocument404 && this.failedDocumentUrls.has(err.url)) return true;
+    if (cfg.ignoreThirdPartyResources) {
+      try {
+        const appOrigin = new URL(this.page.url()).origin;
+        if (new URL(err.url).origin !== appOrigin) return true;
+      } catch {
+        return false;
+      }
+    }
+    return false;
+  }
+
   private async checkBrokenImages(): Promise<void> {
-    const broken = await this.page.evaluate(() => {
-      const imgs = Array.from(document.querySelectorAll('img'));
-      return imgs.filter((img) => img.src && img.naturalWidth === 0).map((img) => img.src);
+    const broken = await this.page.evaluate(async () => {
+      const imgs = Array.from(document.querySelectorAll('img')).filter((img) => img.src);
+      // Give images that are still downloading a chance to finish; an image that is merely
+      // in flight also reports naturalWidth === 0 and must not be counted as broken.
+      await Promise.all(
+        imgs
+          .filter((img) => !img.complete)
+          .map(
+            (img) =>
+              new Promise<void>((resolve) => {
+                img.addEventListener('load', () => resolve(), { once: true });
+                img.addEventListener('error', () => resolve(), { once: true });
+                setTimeout(resolve, 5000);
+              }),
+          ),
+      );
+      return imgs.filter((img) => img.complete && img.naturalWidth === 0).map((img) => img.src);
     });
     expect(broken, `Broken images: ${broken.join(', ')}`).toHaveLength(0);
   }
@@ -55,10 +103,15 @@ export class UniversalChecks {
     else if (level === 'serious') impactLevels.push('serious', 'critical');
     else impactLevels.push('critical');
 
+    // Audit the page at rest: the test's last click/tap can leave the pointer over a link whose
+    // :hover colours would otherwise be what axe measures for colour contrast.
+    await this.page.mouse.move(0, 0);
     const results = await new AxeBuilder({ page: this.page }).analyze();
     const violations = results.violations.filter((v) => impactLevels.includes(v.impact ?? ''));
     expect(
-      violations.map((v) => `${v.id}: ${v.description}`),
+      violations.map(
+        (v) => `${v.id}: ${v.description} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`,
+      ),
       'Accessibility violations found',
     ).toHaveLength(0);
   }

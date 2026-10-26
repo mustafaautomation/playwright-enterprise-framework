@@ -15,15 +15,23 @@ export class InventoryPage extends BasePage {
     await this.navigate('/inventory.html');
   }
 
+  /** The product list renders client-side; wait for it before reading a snapshot of it. */
+  private async waitForProducts(): Promise<void> {
+    await this.page.locator('.inventory_item').first().waitFor({ state: 'visible' });
+  }
+
   async getProductCount(): Promise<number> {
+    await this.waitForProducts();
     return this.page.locator('.inventory_item').count();
   }
 
   async getProductNames(): Promise<string[]> {
+    await this.waitForProducts();
     return this.page.locator('.inventory_item_name').allTextContents();
   }
 
   async getProductPrices(): Promise<number[]> {
+    await this.waitForProducts();
     const prices = await this.page.locator('.inventory_item_price').allTextContents();
     return prices.map((p) => parseFloat(p.replace('$', '')));
   }
@@ -48,5 +56,6 @@ export class InventoryPage extends BasePage {
 
   async openProduct(productName: string): Promise<void> {
     await this.page.locator('.inventory_item_name', { hasText: productName }).click();
+    await this.page.waitForURL(/inventory-item\.html/);
   }
 }

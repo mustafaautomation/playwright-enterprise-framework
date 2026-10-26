@@ -26,25 +26,28 @@ test.describe('API Mocking & Route Interception', () => {
     });
   });
 
-  test('should gracefully handle blocked static assets @regression', async ({
-    inventoryPage,
-    page,
-  }) => {
-    await test.step('Block all CSS files', async () => {
-      await page.route('**/*.css', (route) => route.abort());
-    });
+  // This test aborts CSS requests on purpose, so the automatic universal checks (which treat
+  // failed same-origin resource loads as errors) are skipped for it.
+  test(
+    'should gracefully handle blocked static assets @regression',
+    { tag: '@skip-universal' },
+    async ({ inventoryPage, page }) => {
+      await test.step('Block all CSS files', async () => {
+        await page.route('**/*.css', (route) => route.abort());
+      });
 
-    await test.step('Page should still render content', async () => {
-      await inventoryPage.goto();
-      const products = page.locator('[data-test="inventory-item"]');
-      await expect(products).toHaveCount(6);
-    });
+      await test.step('Page should still render content', async () => {
+        await inventoryPage.goto();
+        const products = page.locator('[data-test="inventory-item"]');
+        await expect(products).toHaveCount(6);
+      });
 
-    await test.step('Product names should be visible', async () => {
-      const firstProduct = page.locator('[data-test="inventory-item-name"]').first();
-      await expect(firstProduct).toBeVisible();
-    });
-  });
+      await test.step('Product names should be visible', async () => {
+        const firstProduct = page.locator('[data-test="inventory-item-name"]').first();
+        await expect(firstProduct).toBeVisible();
+      });
+    },
+  );
 
   test('should intercept and verify outgoing request headers @regression', async ({
     inventoryPage,

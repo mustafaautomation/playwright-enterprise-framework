@@ -40,17 +40,27 @@ export const test = base.extend<Pages>({
     await use(checks);
   },
   autoUniversalChecks: [
-    async ({ page }, use) => {
+    async ({ page }, use, testInfo) => {
       if (!universalChecksConfig.enabled) {
         await use();
         return;
       }
       const checks = new UniversalChecks(page);
       checks.startConsoleCollection();
-      page.on('load', async () => {
-        await checks.runAll();
-      });
       await use();
+      // Run the checks once, awaited, on the page the test finished on. Running them from a
+      // fire-and-forget 'load' listener raced the test itself (axe evaluating on a closing
+      // page) and could not fail the test reliably. Skip when the test already failed so the
+      // original error is the one reported.
+      if (
+        testInfo.status === testInfo.expectedStatus &&
+        testInfo.expectedStatus === 'passed' &&
+        !testInfo.tags.includes('@skip-universal') &&
+        !page.isClosed() &&
+        page.url().startsWith('http')
+      ) {
+        await checks.runAll();
+      }
     },
     { auto: true },
   ],

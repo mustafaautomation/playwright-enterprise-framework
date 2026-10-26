@@ -17,15 +17,23 @@ export class CartPage extends BasePage {
     await this.navigate('/cart.html');
   }
 
+  /** The cart renders client-side; wait for the list container before reading it. */
+  private async waitForCart(): Promise<void> {
+    await this.page.locator('[data-test="cart-list"]').waitFor({ state: 'visible' });
+  }
+
   async getCartItemCount(): Promise<number> {
+    await this.waitForCart();
     return this.cartItems.count();
   }
 
   async getCartItemNames(): Promise<string[]> {
+    await this.waitForCart();
     return this.page.locator('.cart_item .inventory_item_name').allTextContents();
   }
 
   async getCartItemPrices(): Promise<number[]> {
+    await this.waitForCart();
     const prices = await this.page.locator('.cart_item .inventory_item_price').allTextContents();
     return prices.map((p) => parseFloat(p.replace('$', '')));
   }

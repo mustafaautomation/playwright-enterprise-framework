@@ -13,8 +13,10 @@ export class ProductDetailPage extends BasePage {
     this.productName = page.locator('.inventory_details_name');
     this.productPrice = page.locator('.inventory_details_price');
     this.productDescription = page.locator('.inventory_details_desc');
-    this.addToCartButton = page.locator('[data-test^="add-to-cart"]');
-    this.removeButton = page.locator('[data-test^="remove"]');
+    // Scope the buttons to the detail container so they can never match the inventory list.
+    const details = page.locator('[data-test="inventory-item"].inventory_details_container');
+    this.addToCartButton = details.locator('[data-test^="add-to-cart"]');
+    this.removeButton = details.locator('[data-test^="remove"]');
     this.backButton = page.locator('[data-test="back-to-products"]');
   }
 
