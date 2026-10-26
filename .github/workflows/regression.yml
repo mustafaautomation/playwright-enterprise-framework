@@ -60,7 +60,6 @@ jobs:
 
       - name: Run regression tests
         run: npm run test:regression
-        continue-on-error: true
         env:
           BASE_URL: ${{ vars.BASE_URL || 'https://www.saucedemo.com' }}
           PASSWORD: ${{ secrets.SAUCE_PASSWORD }}

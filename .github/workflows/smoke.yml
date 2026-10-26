@@ -60,7 +60,6 @@ jobs:
 
       - name: Run smoke tests
         run: npm run test:smoke -- --project=chromium --project=auth-tests
-        continue-on-error: true
         env:
           BASE_URL: ${{ vars.BASE_URL || 'https://www.saucedemo.com' }}
           PASSWORD: ${{ secrets.SAUCE_PASSWORD }}
