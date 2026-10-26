@@ -1,6 +1,6 @@
 # Playwright Enterprise Framework
 
-A production-ready Playwright automation framework demonstrating enterprise-level QA engineering practices -- targeting [SauceDemo](https://www.saucedemo.com).
+A Playwright + TypeScript test automation framework, built as a portfolio project, that runs against the public demo shop [SauceDemo](https://www.saucedemo.com).
 
 [![Regression Tests](https://github.com/mustafaautomation/playwright-enterprise-framework/actions/workflows/regression.yml/badge.svg)](https://github.com/mustafaautomation/playwright-enterprise-framework/actions/workflows/regression.yml)
 [![Smoke Tests](https://github.com/mustafaautomation/playwright-enterprise-framework/actions/workflows/smoke.yml/badge.svg)](https://github.com/mustafaautomation/playwright-enterprise-framework/actions/workflows/smoke.yml)
@@ -30,13 +30,13 @@ A production-ready Playwright automation framework demonstrating enterprise-leve
 
 ## Overview
 
-This framework mirrors how production QA automation infrastructure is built at scale. Key outcomes:
+What it includes:
 
-- **72 unique test cases** across 8 browser projects, producing 231 test runs per full execution
+- **74 unique tests** across 8 Playwright projects, 239 test runs per full execution (`npx playwright test --list`)
 - **Zero repeated logins** -- auth state saved once via `global.setup.ts`, reused across all tests
 - **Cross-browser coverage** -- Chromium, Firefox, WebKit, and Mobile Chrome
 - **CI/CD pipeline** -- smoke on PRs, full regression on merge and nightly schedule
-- **Enterprise patterns** -- POM architecture, custom fixtures, `test.step()` tracing, data-driven tests, network validation, API mocking, storage validation
+- **Patterns** -- POM architecture, custom fixtures, `test.step()` tracing, data-driven tests, network validation, API mocking, storage validation
 - **Code quality gates** -- ESLint + Prettier enforced via Husky pre-commit hooks and CI checks
 
 ---
@@ -62,9 +62,9 @@ Running 8 tests using 4 workers
 
 $ npm run test:regression
 
-Running 86 tests using 4 workers
+Running 236 tests using 4 workers
   ...
-  86 passed (41.6s)
+  236 passed (5.2m)
 
 
 $ npx playwright test --project=a11y --project=performance
@@ -79,7 +79,7 @@ $ npx playwright test --project=a11y --project=performance
   6 passed (5.3s)
 ```
 
-> **54 unique test cases** producing **155 runs** across Chromium, Firefox, WebKit, and Mobile Chrome -- plus dedicated a11y, performance, and visual regression suites.
+> **74 unique tests, 239 runs:** 55 tests each on Chromium, Firefox, WebKit and Mobile Chrome, 10 auth tests, plus 4 a11y, 2 performance and 3 visual regression tests. The CI regression job runs the 236 `@regression` runs; the smoke job runs 8 `@smoke` tests on Chromium. Failing tests fail CI; Playwright retries a failed test up to 2 times in CI.
 
 ---
 
