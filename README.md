@@ -5,9 +5,9 @@ A Playwright + TypeScript test automation framework, built as a portfolio projec
 [![Regression Tests](https://github.com/mustafaautomation/playwright-enterprise-framework/actions/workflows/regression.yml/badge.svg)](https://github.com/mustafaautomation/playwright-enterprise-framework/actions/workflows/regression.yml)
 [![Smoke Tests](https://github.com/mustafaautomation/playwright-enterprise-framework/actions/workflows/smoke.yml/badge.svg)](https://github.com/mustafaautomation/playwright-enterprise-framework/actions/workflows/smoke.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Playwright](https://img.shields.io/badge/Playwright-1.58+-45ba63.svg?logo=playwright)](https://playwright.dev)
+[![Playwright](https://img.shields.io/badge/Playwright-1.64-45ba63.svg?logo=playwright)](https://playwright.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6.svg?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
-[![Node.js](https://img.shields.io/badge/Node.js-20+-339933.svg?logo=node.js&logoColor=white)](https://nodejs.org)
+[![Node.js](https://img.shields.io/badge/Node.js-24+-339933.svg?logo=node.js&logoColor=white)](https://nodejs.org)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg?logo=docker&logoColor=white)](Dockerfile)
 
 ---
@@ -168,12 +168,12 @@ Tests intercept HTTP responses to detect failed API calls, broken images (exclud
 
 | Layer | Technology |
 |---|---|
-| Framework | [Playwright](https://playwright.dev) 1.58+ |
-| Language | TypeScript 5 (strict mode) |
+| Framework | [Playwright](https://playwright.dev) 1.64 |
+| Language | TypeScript 6.0 (strict mode), Node.js 24 LTS |
 | Pattern | Page Object Model (POM) |
 | Accessibility | [axe-core](https://github.com/dequelabs/axe-core) (WCAG 2.0 AA) |
 | Reporting | Playwright HTML + JUnit + Allure |
-| Code Quality | ESLint + Prettier |
+| Code Quality | ESLint 10 (flat config, typescript-eslint) + Prettier |
 | Git Hooks | Husky + lint-staged (pre-commit quality gate) |
 | CI/CD | GitHub Actions (smoke + regression) |
 | Test Data | [Faker.js](https://fakerjs.dev) for realistic random data |
