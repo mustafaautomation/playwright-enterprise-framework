@@ -67,7 +67,7 @@
     "@faker-js/faker": "^10.6.0",
     "@playwright/test": "^1.64.1",
     "@types/node": "^24.19.2",
-    "allure-playwright": "^3.14.0",
+    "allure-playwright": "^3.15.0",
     "dotenv": "^17.4.2",
     "eslint": "^10.13.0",
     "eslint-config-prettier": "^10.1.8",
